@@ -480,19 +480,26 @@
       <div class="panel" id="panel2">
         <h3>Перехваченное сообщение</h3>
         <p>
-          Хакер сдвинул каждую букву вперёд по алфавиту на +3.
-          Чтобы прочитать, сдвинь каждую букву <b>назад</b> на 3.
+          Хакер сдвинул каждую букву вперёд по алфавиту на +3. Чтобы прочитать, сдвинь каждую букву <b>назад</b> на 3.
         </p>
 
         <div class="quiz-block" id="quiz2">
           <div style="font-size:.8rem; color:var(--text-main); font-weight:600; margin-bottom:.5rem;">
-            Зашифровано:
+            Зашифровано (шифр Цезаря, сдвиг +3 вперёд по русскому алфавиту):
           </div>
-          <div class="code-bubble" style="margin-bottom:1rem;">ZDG</div>
+
+          <div class="code-bubble" style="margin-bottom:1rem; line-height:1.5; text-wrap:balance;">
+            ДЖУЖЖЛ ФДХЛ ТГУСОП Л РЛНРПХ ЖЕ РХССЕЛБЙ
+          </div>
+
+          <p style="font-size:.8rem; line-height:1.4; color:var(--text-dim); margin-bottom:1rem;">
+            Подсказка: чтобы прочитать, верни каждую букву <b style="color:#fff;">назад на 3 позиции</b> в русском алфавите.
+            В нормальном тексте будет прямое предупреждение про пароли.
+          </p>
 
           <div class="input-row">
             <label for="q2-input">Твоя расшифровка:</label>
-            <input id="q2-input" class="text-input" placeholder="введи слово" />
+            <input id="q2-input" class="text-input" placeholder="введи расшифрованный текст" />
             <button class="quiz-btn" data-check="q2">Проверить</button>
           </div>
 
@@ -684,26 +691,32 @@
 
     // ---------- Уровень 2: шифр ----------
     document.querySelector('[data-check="q2"]').addEventListener('click', () => {
-      const input = document.getElementById('q2-input').value.trim().toLowerCase();
+      const inputRaw = document.getElementById('q2-input').value.trim();
       const resultEl = document.getElementById('quiz2-result');
       const codeEl = document.getElementById('code2');
 
-      // ожидаемое слово после сдвига назад: ZDG -> WAD
-      const expected = 'wad';
+      // исходный незашифрованный текст
+      const expected = 'БЕРЕГИ СВОЙ ПАРОЛЬ И НИКОМУ ЕГО НЕ СООБЩАЙ';
 
-      if (!input){
+      if (!inputRaw){
         resultEl.textContent = 'Введи расшифровку.';
         resultEl.className = 'quiz-result bad';
         codeEl.style.display = 'none';
         return;
       }
 
-      if (input === expected) {
-        resultEl.textContent = 'Красиво. Ты умеешь снимать сдвиг.';
+      // нормализуем регистр и пробелы для сравнения
+      const normalize = (s) => s
+        .replace(/\s+/g,' ')
+        .trim()
+        .toUpperCase();
+
+      if (normalize(inputRaw) === normalize(expected)) {
+        resultEl.textContent = 'Отлично. Ты реально расшифровал(а) сообщение.';
         resultEl.className = 'quiz-result good';
         codeEl.style.display = 'block';
       } else {
-        resultEl.textContent = 'Не то слово. Попробуй подумать: Z -> W (три назад), D -> A, G -> ?';
+        resultEl.textContent = 'Не совсем. Подумай: каждую букву надо отодвинуть НАЗАД на 3. В тексте явно есть слово «ПАРОЛЬ».';
         resultEl.className = 'quiz-result bad';
         codeEl.style.display = 'none';
       }
