@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Операция «Сейф» — мастер‑класс по кибербезопасности</title>
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 20% 20%, #1a1a2f 0%, #0a0a12 70%);
+      --card-bg: rgba(34, 34, 51, 0.6);
+      --card-border: rgba(255, 255, 255, 0.07);
+      --accent: #8a6bff;
+      --accent-soft: rgba(138,107,255,0.12);
+      --text-main: #ffffff;
+      --text-dim: #9ca3c7;
+      --radius-xl: 1.25rem;
+      --radius-lg: 0.75rem;
+      --radius-full: 999px;
+      --gap-lg: 2rem;
+      --gap-md: 1rem;
+      --gap-sm: .5rem;
+      --font-stack: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-stack);
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 2rem 1rem 1rem;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .5rem .75rem;
+      font-size: .8rem;
+      color: var(--text-dim);
+    }
+
+    .badge {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-full);
+      padding: .4rem .75rem;
+      font-weight: 500;
+      font-size: .75rem;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    h1 {
+      font-size: clamp(1.5rem,2vw,2rem);
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .75rem;
+      margin: 0;
+    }
+
+    h1 .mark {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-radius: var(--radius-full);
+      padding: .4rem .75rem;
+      font-size: .8rem;
+      line-height: 1.2;
+      font-weight: 500;
+      border: 1px solid var(--accent);
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: var(--text-dim);
+      max-width: 60ch;
+    }
+
+    .cta-row {
+      margin-top: .5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+    }
+
+    .cta-btn {
+      background: var(--accent);
+      color: #0a0a12;
+      font-weight: 600;
+      border: 0;
+      border-radius: var(--radius-full);
+      font-size: .9rem;
+      line-height: 1.2;
+      padding: .8rem 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 20px 40px rgba(138,107,255,.4);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .cta-btn:hover {
+      box-shadow: 0 30px 60px rgba(138,107,255,.55);
+      transform: translateY(-2px);
+    }
+
+    main {
+      flex: 1;
+      padding: 1rem;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto 4rem;
+      display: grid;
+      gap: 2rem;
+    }
+
+    /* layout sections */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--gap-lg);
+    }
+    @media(min-width:768px){
+      .grid-2 {
+        grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      }
+    }
+
+    section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem 1.25rem;
+      position: relative;
+      box-shadow: 0 30px 80px rgba(0,0,0,.6);
+    }
+
+    section h2 {
+      margin: 0 0 .75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    section h2 .tag {
+      font-size: .7rem;
+      line-height: 1.2;
+      font-weight: 500;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-full);
+      padding: .3rem .6rem;
+      white-space: nowrap;
+    }
+
+    p, li {
+      font-size: .9rem;
+      color: var(--text-dim);
+      margin: 0 0 .6rem;
+    }
+
+    ul {
+      margin: 0 0 1rem 1.25rem;
+      padding: 0;
+    }
+
+    .card-accent {
+      border: 1px solid var(--accent);
+      background: linear-gradient(
+        160deg,
+        rgba(138,107,255,0.12) 0%,
+        rgba(10,10,18,0) 60%
+      );
+    }
+
+    .flex-row {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      gap:1rem;
+    }
+
+    .code-bubble {
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      background: rgba(0,0,0,.4);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius-lg);
+      font-size: .8rem;
+      padding: .6rem .75rem;
+      line-height: 1.4;
+      color: var(--text-main);
+      min-width: max-content;
+    }
+
+    .list-tight li{
+      margin-bottom:.4rem;
+    }
+
+    .final-box{
+      background: rgba(0,0,0,.35);
+      border:1px dashed var(--accent);
+      border-radius:var(--radius-xl);
+      padding:1rem 1rem 1.25rem;
+      font-size:.9rem;
+    }
+    .final-code{
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      background:#000;
+      color:var(--accent);
+      border-radius:var(--radius-lg);
+      padding:.6rem .75rem;
+      font-size:.85rem;
+      line-height:1.4;
+      display:inline-block;
+      border:1px solid var(--accent);
+      box-shadow:0 10px 30px rgba(138,107,255,.4);
+    }
+
+    footer {
+      max-width:1200px;
+      width:100%;
+      margin:0 auto 4rem;
+      padding:0 1rem;
+      color:var(--text-dim);
+      font-size:.75rem;
+      text-align:center;
+    }
+
+    hr.divider{
+      border:0;
+      border-top:1px solid rgba(255,255,255,.07);
+      margin:1.25rem 0 1rem;
+    }
+
+    .mini-title{
+      font-size:.8rem;
+      font-weight:600;
+      color:var(--text-main);
+      margin-bottom:.5rem;
+    }
+
+    .teach-box{
+      display:grid;
+      gap:1rem;
+    }
+    @media(min-width:768px){
+      .teach-box{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    .teach-col{
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:var(--radius-lg);
+      padding:1rem;
+    }
+
+    .teach-col b{
+      color:var(--text-main);
+      font-weight:600;
+      font-size:.8rem;
+      display:block;
+      margin-bottom:.5rem;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge-row">
+      <span class="badge">27.10.2025</span>
+      <span class="badge">онлайн / офлайн</span>
+      <span class="badge">цифровая безопасность</span>
+    </div>
+
+    <h1>
+      Операция «Сейф»
+      <span class="mark">интерактивный мастер‑класс</span>
+    </h1>
+
+    <div class="subtitle">
+      Ваша миссия — спасти данные колледжа. Пройдите цепочку заданий, взломайте шифр, распознайте фишинг и откройте «сейф» с кодом.
+    </div>
+
+    <div class="cta-row">
+      <a class="cta-btn" href="#start">Начать квест</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Легенда и подготовка -->
+    <div class="grid-2" id="start">
+      <section class="card-accent">
+        <h2>
+          0. Легенда миссии
+          <span class="tag">контекст</span>
+        </h2>
+        <p>
+          Неизвестный пытается получить доступ к критичным данным. У вас есть только рабочая папка «Квест Операция Сейф» и подсказки внутри.
+        </p>
+        <p>
+          Ваша задача: собрать трёхзначный код и открыть «сейф». Если код неверный — данные будут уничтожены системой автоудаления.
+        </p>
+      </section>
+
+      <section>
+        <h2>
+          1. Подготовка рабочего места
+          <span class="tag">старт</span>
+        </h2>
+        <p>Откройте папку <b>«Квест Операция Сейф»</b> на рабочем столе. Внутри должны быть файлы:</p>
+        <ul class="list-tight">
+          <li><code class="code-bubble">Пароли.docx</code></li>
+          <li><code class="code-bubble">Шифр.txt</code></li>
+          <li><code class="code-bubble">Письмо.pdf</code></li>
+        </ul>
+        <p><b>Важно:</b> не переименовывать файлы и не переносить их в другие папки.</p>
+      </section>
+    </div>
+
+    <!-- Пароли -->
+    <section>
+      <h2>
+        Задание 1. Пароли.docx
+        <span class="tag">безопасные пароли</span>
+      </h2>
+      <p>1. Откройте файл <code class="code-bubble">Пароли.docx</code>.</p>
+      <p>2. В документе есть таблица с паролями. Найдите самый надёжный пароль. Он должен:</p>
+      <ul class="list-tight">
+        <li>быть достаточно длинным;</li>
+        <li>содержать большие и маленькие буквы;</li>
+        <li>содержать цифры;</li>
+        <li>содержать спецсимволы (!, @, # и т.д.);</li>
+        <li>не быть похожим на обычное слово типа <i>qwerty</i> или дату рождения.</li>
+      </ul>
+      <p>3. Рядом с этим паролем будет запись формата <code class="code-bubble">Код 1: 7</code>.</p>
+      <p><b>Запишите число из «Код 1». Это первая часть комбинации сейфа.</b></p>
+      <hr class="divider" />
+      <div class="mini-title">Чему это учит</div>
+      <div class="teach-box">
+        <div class="teach-col">
+          <b>Понятно</b>
+          Надёжный пароль — это не «Masha2007», а что-то вроде <i>P@ssw0rd!17</i> (и даже это не идеально, но лучше).
+        </div>
+        <div class="teach-col">
+          <b>Важно</b>
+          Один слабый пароль = вход злоумышленника в систему без взлома. Он просто угадывает.
+        </div>
+      </div>
+    </section>
+
+    <!-- Шифр -->
+    <section>
+      <h2>
+        Задание 2. Шифр.txt
+        <span class="tag">криптография</span>
+      </h2>
+      <p>1. Откройте файл <code class="code-bubble">Шифр.txt</code>.</p>
+      <p>2. Внутри текст зашифрован шифром Цезаря со сдвигом <b>+3</b>. Чтобы прочитать сообщение, сдвиньте каждую букву <b>назад</b> на 3 позиции в алфавите.</p>
+      <div class="flex-row">
+        <div>
+          <div class="mini-title">Пример</div>
+          <div class="code-bubble">Z → W<br/>D → A<br/>G → D</div>
+        </div>
+        <div>
+          <div class="mini-title">Было</div>
+          <div class="code-bubble">ZDG</div>
+        </div>
+        <div>
+          <div class="mini-title">Стало</div>
+          <div class="code-bubble">WAD</div>
+        </div>
+      </div>
+      <p>3. В расшифрованном сообщении найдите фразу формата <code class="code-bubble">Код 2: 5</code>.</p>
+      <p><b>Запишите число из «Код 2». Это вторая часть комбинации сейфа.</b></p>
+      <hr class="divider" />
+      <div class="mini-title">Чему это учит</div>
+      <div class="teach-box">
+        <div class="teach-col">
+          <b>Понятно</b>
+          Шифрование — это просто правило преобразования. Если знаешь правило, ты можешь вернуть исходный текст.
+        </div>
+        <div class="teach-col">
+          <b>Важно</b>
+          Настоящая криптография в жизни сложнее Цезаря, но идея та же: без ключа текст бессмысленен.
+        </div>
+      </div>
+    </section>
+
+    <!-- Фишинг -->
+    <section>
+      <h2>
+        Задание 3. Письмо.pdf
+        <span class="tag">фишинг</span>
+      </h2>
+      <p>1. Откройте файл <code class="code-bubble">Письмо.pdf</code>.</p>
+      <p>2. Это якобы служебное письмо от администратора. Найдите признаки фишинга:</p>
+      <ul class="list-tight">
+        <li>«Срочно перейдите по ссылке прямо сейчас»;</li>
+        <li>«Мы заблокируем ваш аккаунт через 10 минут»;</li>
+        <li>Ошибки в тексте, странная орфография;</li>
+        <li>Адрес отправителя не совпадает с реальным доменом колледжа.</li>
+      </ul>
+      <p>3. В самом конце письма (мелким шрифтом) указан <code class="code-bubble">Код 3: 3</code>.</p>
+      <p><b>Запишите число из «Код 3». Это третья часть комбинации сейфа.</b></p>
+      <hr class="divider" />
+      <div class="mini-title">Чему это учит</div>
+      <div class="teach-box">
+        <div class="teach-col">
+          <b>Понятно</b>
+          Реальные мошенники работают не через «хакерские программы», а через психологическое давление.
+        </div>
+        <div class="teach-col">
+          <b>Важно</b>
+          Никогда не переходите по ссылкам из писем «с угрозой блокировки» без проверки отправителя.
+        </div>
+      </div>
+    </section>
+
+    <!-- Итоговый код и сейф -->
+    <section class="card-accent">
+      <h2>
+        Финал. Открытие сейфа
+        <span class="tag">проверка</span>
+      </h2>
+      <div class="final-box">
+        <p class="mini-title">Сбор кода</p>
+        <ol style="margin:0 0 1rem 1.25rem; padding:0; color:var(--text-dim); font-size:.9rem;">
+          <li>Возьмите три числа: из «Код 1», «Код 2», «Код 3».</li>
+          <li>Запишите их в формате <span class="final-code">Код1-Код2-Код3</span>.</li>
+          <li>Пример: <span class="final-code">7-5-3</span>.</li>
+        </ol>
+
+        <p class="mini-title">Проверка</p>
+        <p>Вернитесь в папку <b>«Квест Операция Сейф»</b> и откройте файл <code class="code-bubble">Ответ.txt</code>.</p>
+        <p>Сравните свой код с правильным.</p>
+
+        <p><b>Если совпало:</b> вы взяли «сейф» и спасли данные 🎉</p>
+        <p><b>Если не совпало:</b> перепроверьте пароль, сдвиг Цезаря и признаки фишинга.</p>
+      </div>
+    </section>
+
+    <!-- Навыки -->
+    <section>
+      <h2>
+        Чему вы научитесь за мастер‑класс
+        <span class="tag">результат</span>
+      </h2>
+      <ul class="list-tight">
+        <li>узнавать слабые и сильные пароли;</li>
+        <li>понимать, что такое шифр Цезаря и как его ломают;</li>
+        <li>видеть фишинговые письма до того, как вы на них кликнули;</li>
+        <li>самостоятельно проверять гипотезу, а не «просто верить компьютеру».</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    Мастер‑класс «Операция «Сейф». Дата проведения: 27.10.2025. Материал предназначен для учебных целей.
+  </footer>
+</body>
+</html>
